@@ -17,17 +17,16 @@ public class App {
     public static void main(String[] args) throws Exception {
         List<Employee> employees = loadSampleData();
 
-        // Feature 1: All employees
+
         printAllEmployeesAsJson(employees);
 
-        // Feature 2: Quarterly Upcoming Enrollees
         printQuarterlyUpcomingEnrollees(employees);
     }
 
     private static List<Employee> loadSampleData() {
         List<Employee> employees = new ArrayList<>();
 
-        // #1 Daniel Agar (with PensionPlan EX1089)
+
         Employee e1 = new Employee(
                 1L,
                 "Daniel",
@@ -38,7 +37,7 @@ public class App {
         e1.setPensionPlan(new PensionPlan("EX1089", null, 100.00));
         employees.add(e1);
 
-        // #2 Benard Shaw (not enrolled)
+
         Employee e2 = new Employee(
                 2L,
                 "Benard",
@@ -48,7 +47,7 @@ public class App {
         );
         employees.add(e2);
 
-        // #3 Carly Agar (with PensionPlan SM2307)
+
         Employee e3 = new Employee(
                 3L,
                 "Carly",
@@ -59,7 +58,7 @@ public class App {
         e3.setPensionPlan(new PensionPlan("SM2307", LocalDate.parse("2017-05-17"), 1555.50));
         employees.add(e3);
 
-        // #4 Wesley Schneider (not enrolled)
+
         Employee e4 = new Employee(
                 4L,
                 "Wesley",
@@ -69,7 +68,7 @@ public class App {
         );
         employees.add(e4);
 
-        // #5 Anna Wiltord (not enrolled)
+
         Employee e5 = new Employee(
                 5L,
                 "Anna",
@@ -79,7 +78,7 @@ public class App {
         );
         employees.add(e5);
 
-        // #6 Yosef Tesfalem (not enrolled)
+
         Employee e6 = new Employee(
                 6L,
                 "Yosef",
@@ -93,20 +92,23 @@ public class App {
     }
 
     private static void printAllEmployeesAsJson(List<Employee> employees) throws Exception {
-        employees.sort(
-                Comparator.comparingDouble(Employee::getYearlySalary).reversed()
-                        .thenComparing(Employee::getLastName)
-        );
+        List<Employee> sortedEmployees = employees.stream()
+                .sorted(
+                        Comparator.comparingDouble(Employee::getYearlySalary).reversed()
+                                .thenComparing(Employee::getLastName)
+                )
+                .collect(Collectors.toList());
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
         mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
 
-        String json = mapper.writeValueAsString(employees);
+        String json = mapper.writeValueAsString(sortedEmployees);
         System.out.println("Printing all Employees (Sorted)");
         System.out.println(json);
     }
+
 
     private static void printQuarterlyUpcomingEnrollees(List<Employee> employees) throws Exception {
         LocalDate today = LocalDate.now();
@@ -137,22 +139,22 @@ public class App {
         int year = today.getYear();
         int month = today.getMonthValue();
 
-        if (month <= 3) { // current Q1 → next Q2
+        if (month <= 3) {
             return new LocalDate[]{
                     LocalDate.of(year, Month.APRIL, 1),
                     LocalDate.of(year, Month.JUNE, 30)
             };
-        } else if (month <= 6) { // current Q2 → next Q3
+        } else if (month <= 6) {
             return new LocalDate[]{
                     LocalDate.of(year, Month.JULY, 1),
                     LocalDate.of(year, Month.SEPTEMBER, 30)
             };
-        } else if (month <= 9) { // current Q3 → next Q4
+        } else if (month <= 9) {
             return new LocalDate[]{
                     LocalDate.of(year, Month.OCTOBER, 1),
                     LocalDate.of(year, Month.DECEMBER, 31)
             };
-        } else { // current Q4 → next Q1 of next year
+        } else {
             return new LocalDate[]{
                     LocalDate.of(year + 1, Month.JANUARY, 1),
                     LocalDate.of(year + 1, Month.MARCH, 31)
