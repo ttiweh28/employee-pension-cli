@@ -1,9 +1,14 @@
 package com.company.pension.model;
 import java.time.LocalDate;
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 
 public class PensionPlan {
     private String planReferenceNumber;
+
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate enrollmentDate;
+
     private double monthlyContribution;
 
     public PensionPlan(String planReferenceNumber, LocalDate enrollmentDate, double monthlyContribution) {

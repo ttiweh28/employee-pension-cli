@@ -1,12 +1,17 @@
 package com.company.pension.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.time.LocalDate;
 
     public class Employee {
         private long employeeId;
         private String firstName;
         private String lastName;
+
+        @JsonFormat(pattern = "yyyy-MM-dd")
         private LocalDate employmentDate;
+
         private double yearlySalary;
         private PensionPlan pensionPlan; // null if not enrolled
 
